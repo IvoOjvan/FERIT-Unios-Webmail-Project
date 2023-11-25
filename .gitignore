@@ -39,4 +39,8 @@ build/
 .vscode/
 
 ### Mac OS ###
+<<<<<<< HEAD
 .DS_Store
+=======
+.DS_Store
+>>>>>>> 4c9b6868b97e9ea5fecb357fe43027f1aceac17f
