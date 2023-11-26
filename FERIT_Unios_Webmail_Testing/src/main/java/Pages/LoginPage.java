@@ -1,30 +1,34 @@
 package Pages;
 
+import Classes.User;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.By;
 public class LoginPage {
+    protected WebDriver driver;
 
-    private static WebElement element = null;
-    public static WebElement textbox_username(WebDriver driver){
-        element = driver.findElement(By.xpath("//*[@id=\"rcmloginuser\"]"));
-        return element;
+    //region Elements
+    private By usernameTextbox = By.xpath("//*[@id=\"rcmloginuser\"]");
+    private By passwordTextbox = By.xpath("//*[@id=\"rcmloginpwd\"]");
+    private By loginButton = By.xpath("//*[@id=\"rcmloginsubmit\"]");
+    //endregion
+
+    public LoginPage(WebDriver driver){
+        this.driver = driver;
+        if(!driver.getTitle().equals("Student.FERIT Webmail :: Welcome to Student.FERIT Webmail")){
+            throw new IllegalStateException("This is not Sign In Page," +
+                    "current page is: " + driver.getCurrentUrl());
+        }
     }
 
-    public static WebElement textbox_password(WebDriver driver){
-        element = driver.findElement(By.xpath("//*[@id=\"rcmloginpwd\"]"));
-        return element;
+    public MainPage LoginValidUser(User user){
+        driver.findElement(usernameTextbox).sendKeys(user.getUsername());
+        driver.findElement(passwordTextbox).sendKeys(user.getPassword());
+        driver.findElement(loginButton).click();
+        return new MainPage(driver);
     }
 
-    public static WebElement button_login(WebDriver driver){
-        element = driver.findElement(By.xpath("//*[@id=\"rcmloginsubmit\"]"));
-        return element;
+    public String GetPageTitle(){
+        return driver.getTitle();
     }
-
-    public static WebElement link_getSupport(WebDriver driver){
-        element = driver.findElement(By.xpath("/html/body/div/div[3]/a"));
-        return element;
-    }
-
-
 }
