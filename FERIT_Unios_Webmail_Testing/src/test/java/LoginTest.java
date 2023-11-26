@@ -1,16 +1,24 @@
 import Classes.User;
 import Pages.LoginPage;
+import Pages.MainPage;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.testng.annotations.*;
+import org.testng.reporters.jq.Main;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class LoginTest {
     public WebDriver driver;
@@ -25,33 +33,17 @@ public class LoginTest {
 
     @Test
     void ValidLoginTest(){
-        User user = getUser();
+        User user = User.GetUser();
 
-        LoginPage.textbox_username(driver).sendKeys(user.getUsername());
-        LoginPage.textbox_password(driver).sendKeys(user.getPassword());
+        LoginPage loginPage = new LoginPage(driver);
+        MainPage mainPage = loginPage.LoginValidUser(user);
 
-        LoginPage.button_login(driver).click();
-
-        WebElement userMail = driver.findElement(By.xpath("/html/body/div[1]/div[1]/div[2]/span"));
-
-        Assert.assertEquals(userMail.getText(), user.getUsername()+"@student.ferit.hr");
+        Assert.assertEquals(mainPage.GetCurrentUser(), user.getUsername()+"@student.ferit.hr");
     }
+
 
     @AfterMethod
     void teardown(){
         driver.quit();
-    }
-
-    private User getUser() {
-        ObjectMapper mapper = new ObjectMapper();
-        File file = new File("./user.json");
-        User user;
-        try {
-            user = mapper.readValue(file, User.class);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        return user;
     }
 }
