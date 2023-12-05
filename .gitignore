@@ -4,6 +4,7 @@ target/
 !**/src/test/**/target/
 
 FERIT_Unios_Webmail_Testing/target/
+FERIT_Unios_Webmail_Testing/allure-results/
 FERIT_Unios_Webmail_Testing/user.json
 FERIT_Unios_Webmail_Testing/*.jar
 
