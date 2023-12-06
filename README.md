@@ -26,9 +26,9 @@ git clone https://github.com/IvoOjvan/FERIT-Unios-Webmail-Project.git
   2.3 click "Reload project"
 
 4. Download Allure binnaries
-```
-Allure binnaries can be downloaded at [Allure binnaries](https://github.com/allure-framework/allure2/releases/tag/2.25.0)
-```
+
+Allure binnaries can be downloaded at [Allure binnaries](https://github.com/allure-framework/allure2/releases/tag/2.25.0/)
+
 4. Add Allure to IDE Path Variables
 
 allure-2.25.0\allure-2.25.0\bin
