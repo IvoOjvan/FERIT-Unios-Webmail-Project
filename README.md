@@ -18,7 +18,7 @@ webdriver, Java programing language and maven architecture.
 1. Clone the repository
 
 ```
-git clone [Link Text](https://github.com/IvoOjvan/FERIT-Unios-Webmail-Project.git)
+git clone https://github.com/IvoOjvan/FERIT-Unios-Webmail-Project.git
 ```
 2. Reload maven project
 
