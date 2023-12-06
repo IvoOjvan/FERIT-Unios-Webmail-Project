@@ -8,13 +8,13 @@ webdriver, Java programing language and maven architecture.
 -[Usage](#usage)
 -[Contributing](#contributing)
 
-##Prerequisites
+## Prerequisites
 -Java (JDK)
 -Web browser, Firefox or Chrome
 -IntelliJ Community Edition (Opional)
 -Windows operating system
 
-##Instalation
+## Instalation
 1. Clone the repository
 
 ```
@@ -33,7 +33,7 @@ Right click on pom.xml, hover Maven and click "Reload project"
 allure-2.25.0\allure-2.25.0\bin
 
 
-##Usage
+## Usage
 1. Enter project folder
 
 cd FERIT-Unios-Webmail-Testing
