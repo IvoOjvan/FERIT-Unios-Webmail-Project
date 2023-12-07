@@ -37,17 +37,19 @@ e.g. allure-2.25.0\allure-2.25.0\bin
 
 
 ## Usage
-1. Enter project folder
+### 1. Enter project folder
     ```
     cd FERIT-Unios-Webmail-Testing
     ```
-2. Run tests using testng.xml
+### 2. Run tests using testng.xml
+	In terminal enter this line (run with ctrl + enter):
     ```
-    In terminal enter: mvn test (ctrl + enter)
+    mvn test
     ```
-3. See test resaults
+### 3. See test resaults
+    In terminal enter this line:
     ```
-    In terminal enter: allure serve allure-results
+    allure serve allure-results
     ```
 
 ## Pages
