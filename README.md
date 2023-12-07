@@ -7,6 +7,8 @@ webdriver, Java programing language and maven architecture.
 1. [Prerequisites](#prerequisites)
 2. [Installation](#installation)
 3. [Usage](#usage)
+4. [Tests](#tests)
+5. [Pages](#pages)
 
 ## Prerequisites
 -Java (JDK)
@@ -31,7 +33,7 @@ Allure binnaries can be downloaded at [Allure binnaries](https://github.com/allu
 
 4. Add Allure to IDE Path Variables
 
-allure-2.25.0\allure-2.25.0\bin
+e.g. allure-2.25.0\allure-2.25.0\bin
 
 
 ## Usage
@@ -48,4 +50,82 @@ In terminal enter: mvn test (ctrl + enter)
 In terminal enter: allure serve allure-results
 
 
+## Pages
+Best practice states that before writing test you should make classes representing each page of
+web application this approach is called Page Object Model
+
+### PageObject class
+This class contains of WebDriver instance and constructor which sets value to driver instance using  
+dependecy injection and initializig element using PageFactory
+
+```java
+public class PageObject {
+    protected WebDriver driver;
+
+    public PageObject(WebDriver driver){
+        this.driver = driver;
+        PageFactory.initElements(driver, this);
+    }
+}
+```
+
+### Actual Page Object
+Actual page object should extend PageObject class and in this class all WebElements such as
+buttons, textboxs, images, ... should be defind using @FindBy() notation which can take xpath, name,
+id or something else as parameter.
+
+e.g.
+```java
+public class ReceiptPage extends PageObject {
+    @FindBy(tagName = "h1")
+    private WebElement header;
+
+    public ReceiptPage(WebDriver driver) {
+        super(driver);
+    }
+}
+```
+
+
+## Tests
+### FunctionalTest class
+According to best practices this class should contain WebDriver instance and methods needed to setup driver
+before executing test
+
+```java
+public class FunctionalTest {
+
+	protected static WebDriver driver;
+	
+	@BeforeClass
+	public static void setUp(){
+		driver = new FirefoxDriver();
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+	}
+	
+	@After
+	public void cleanUp(){
+		driver.manage().deleteAllCookies();
+	}
+	
+	@AfterClass
+	public static void tearDown(){
+		driver.close();
+	}	
+}
+```
+
+### Actual test class
+Test class should extend FunctionalTest class and contain only test method
+marked with @Test
+
+```java
+public class SignUpFormTest extends FunctionalTest {
+
+	@Test
+	public void signUp(){
+		test code...
+	}	
+}
+```
 
