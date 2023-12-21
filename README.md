@@ -7,52 +7,56 @@ webdriver, Java programing language and maven architecture.
 1. [Prerequisites](#prerequisites)
 2. [Installation](#installation)
 3. [Usage](#usage)
-4. [Tests](#tests)
-5. [Pages](#pages)
+4. [Pages](#pages)
+5. [Tests](#tests)
 
+<a name="prerequisites"></a>
 ## Prerequisites
--Java (JDK)
--Web browser, Firefox or Chrome
--IntelliJ Community Edition (Opional)
--Windows operating system
+  1. Java (JDK)
+  2. Web browser, Firefox or Chrome
+  3. IntelliJ Community Edition (Opional)
+  4. Windows operating system
 
-## Installation
-1. Clone the repository
+<a name="installation"></a>
+# Installation
+### 1. Clone the repository
 
 ```
 git clone https://github.com/IvoOjvan/FERIT-Unios-Webmail-Project.git
 ```
-2. Reload maven project
-  -2.1 Right click on pom.xml
-  -2.2 hover Maven
-  -2.3 click "Reload project"
+### 2. Reload maven project
+  1. Right click on pom.xml
+  2. Hover Maven
+  2. Click "Reload project"
 
-4. Download Allure binnaries
+### 3. Download Allure binnaries
 
 Allure binnaries can be downloaded at [Allure binnaries](https://github.com/allure-framework/allure2/releases/tag/2.25.0/)
 
-4. Add Allure to IDE Path Variables
+### 4. Add Allure to IDE Path Variables
 
 e.g. allure-2.25.0\allure-2.25.0\bin
 
-
-## Usage
+<a name="usage"></a>
+# Usage
 ### 1. Enter project folder
-    ```
-    cd FERIT-Unios-Webmail-Testing
-    ```
+```
+   cd FERIT-Unios-Webmail-Testing
+```
 ### 2. Run tests using testng.xml
 In terminal enter this line (run with ctrl + enter):
-    ```
+
+```
     mvn test
-    ```
+```
 ### 3. See test resaults
 In terminal enter this line:
-    ```
+ ```
     allure serve allure-results
-    ```
+  ```
 
-## Pages
+<a name="pages"></a>
+# Pages
 Best practice states that before writing test you should make classes representing each page of
 web application this approach is called Page Object Model
 
@@ -88,8 +92,8 @@ public class ReceiptPage extends PageObject {
 }
 ```
 
-
-## Tests
+<a name="tests"></a>
+# Tests
 ### FunctionalTest class
 According to best practices this class should contain WebDriver instance and methods needed to setup driver
 before executing test
