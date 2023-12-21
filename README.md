@@ -23,9 +23,9 @@ webdriver, Java programing language and maven architecture.
 git clone https://github.com/IvoOjvan/FERIT-Unios-Webmail-Project.git
 ```
 2. Reload maven project
-  2.1 Right click on pom.xml
-  2.2 hover Maven
-  2.3 click "Reload project"
+  -2.1 Right click on pom.xml
+  -2.2 hover Maven
+  -2.3 click "Reload project"
 
 4. Download Allure binnaries
 
