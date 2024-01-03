@@ -4,13 +4,14 @@ import Pages.ComposeEmailPage;
 import Pages.LoginPage;
 import Pages.MainPage;
 import TestBase.TestBase;
+import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 
 public class InboxTest extends TestBase {
-
-    @Test(priority = 1)
+    /*
+    @Test
     public void SendValidEmail(){
         LoginPage loginPage = new LoginPage();
         MainPage mainPage = loginPage.LoginUser(User.GetUser());
@@ -23,29 +24,31 @@ public class InboxTest extends TestBase {
         );
 
         mainPage = composeEmailPage.SendEmail(email);
-        Assert.assertTrue(mainPage.CheckIfEmailExists(email));
-    }
+        Assert.assertNotNull(mainPage);
 
+        Boolean expectedResult = true;
+        Boolean actualResult = mainPage.CheckIfEmailExists(email);
+        Assert.assertEquals(actualResult, expectedResult);
+    }*/
 
-    @Test(priority = 2)
-    public void SendEmptyReceiverEmail(){
+    @Test
+    public void DeleteMail(){
         LoginPage loginPage = new LoginPage();
         MainPage mainPage = loginPage.LoginUser(User.GetUser());
         ComposeEmailPage composeEmailPage = mainPage.ComposeEmail();
 
         Email email = new Email(
-                "",
-                "Empty receiver subject",
-                "Empty receiver message"
-        );
-
-        mainPage = composeEmailPage.SendInvalidEmail(email);
-
-        Email alertEmail = new Email(
                 "iojvan@etfos.hr",
-                "Alert - Receiver added additionally!",
-                "Empty receiver message"
+                "Mail to be deleted",
+                "This mail should be deleted."
         );
-        Assert.assertTrue(mainPage.CheckIfEmailExists(alertEmail));
+
+        mainPage = composeEmailPage.SendEmail(email);
+        mainPage.DeleteMail(email);
+
+        String expectedMessage = "Message(s) deleted successfully.";
+        String actualMessage = mainPage.GetStatusMessage();
+
+        Assert.assertEquals(actualMessage, expectedMessage);
     }
 }

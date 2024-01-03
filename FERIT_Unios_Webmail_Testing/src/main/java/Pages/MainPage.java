@@ -2,29 +2,36 @@ package Pages;
 
 import Classes.Email;
 import TestBase.DriverFactory;
+import com.beust.ah.A;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.FindBys;
+import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.support.ui.Wait;
 import org.testng.Assert;
-import java.time.Duration;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
+
 
 public class MainPage extends PageObject{
-    @FindBy(xpath = "//*[@id=\"rcmbtn101\"]")
+    @FindBy(id = "rcmbtn101")
     private WebElement logoutButton;
-    @FindBy(xpath = "/html/body/div[1]/div[1]/div[2]/span")
+    @FindBy(id = "username")
     private WebElement currentUser;
-    @FindBy(xpath = "//*[@id=\"rcmbtn107\"]")
+    @FindBy(id = "rcmbtn107")
     private WebElement composeButton;
-    @FindBy(xpath = "/html/body/div[2]/div[3]/div[1]/div/div[1]/ul/li[3]/a")
+    @FindBy(id = "rcmliU2VudA")
     private WebElement sentEmailsButton;
-    @FindBy(xpath = "//*[@id=\"messagelist\"]")
+    @FindBy(id = "messagelist")
     private WebElement sentEmailsTable;
+    @FindBy(id = "rcmbtn111")
+    private WebElement deleteMailButton;
+    @FindBy(id = "messagestack")
+    private WebElement statusMessage;
 
     public MainPage(){
         super(DriverFactory.getInstance().getDriver());
@@ -32,13 +39,10 @@ public class MainPage extends PageObject{
     }
 
     public LoginPage Logout(){
-        Wait<WebDriver> wait = customWait(15, 1000);
-        // iz nekog bozjeg razloga radi s duplim klikom
-        //logoutButton.click();
-        wait.until(ExpectedConditions.visibilityOf(logoutButton));
+        customWait(15, 1000)
+                .until(ExpectedConditions.elementToBeClickable(logoutButton));
         logoutButton.click();
         logoutButton.click();
-        wait.until(ExpectedConditions.invisibilityOf(logoutButton));
         return new LoginPage();
     }
 
@@ -47,47 +51,60 @@ public class MainPage extends PageObject{
     }
 
     public boolean isInitialized(){
-        return logoutButton.isDisplayed();
+        customWait(15,1000)
+                .until(ExpectedConditions.elementToBeClickable(logoutButton));
+        return logoutButton.isEnabled();
     }
 
     public ComposeEmailPage ComposeEmail() {
-        Wait<WebDriver> wait = customWait(30, 1000);
-        wait.until(ExpectedConditions.visibilityOf(composeButton));
-        composeButton.click();
-        //wait = customWait(30,1000);
-        //composeButton.click();
-        driver.navigate().to("https://www.etfos.unios.hr/webmail/?_task=mail&_action=compose");
-        wait.until(ExpectedConditions.urlContains("compose"));
+        customWait(10, 1000)
+                .until(ExpectedConditions.visibilityOf(composeButton));
+
+        Actions action = new Actions(driver);
+        action.moveToElement(composeButton).click().perform();
+
         return new ComposeEmailPage();
     }
 
-    public void ShowSentEmails(){
-        Wait<WebDriver> wait = customWait(15,1000);
-        wait.until(ExpectedConditions.elementToBeClickable(sentEmailsButton));
-        sentEmailsButton.click();
-        sentEmailsButton.click();
+    public void DeleteMail(Email email){
+        if(CheckIfEmailExists(email)){
+            WebElement emailRow = getEmailRow(email);
+            Actions action = new Actions(driver);
+            if(emailRow != null)
+                //emailRow.click();
+                action.moveToElement(emailRow).click().perform();
+            customWait(10,1000)
+                    .until(ExpectedConditions.elementToBeClickable(deleteMailButton));
+            action.moveToElement(deleteMailButton).click().perform();
+        }
+    }
+
+    public String GetStatusMessage(){
+        customWait(15,1000)
+                .until(ExpectedConditions.not(
+                        ExpectedConditions.textToBePresentInElement(statusMessage, statusMessage.getText())));
+        return statusMessage.getText();
+    }
+
+    public WebElement getEmailRow(Email email){
+        customWait(50, 1000)
+                .until(ExpectedConditions.textToBePresentInElement(sentEmailsTable, sentEmailsTable.getText()));
+        List<WebElement> rows = sentEmailsTable.findElements(By.tagName("tr"));
+        for(WebElement rowElement : rows){
+            List<WebElement> cells = rowElement.findElements(By.tagName("td"));
+            for(WebElement cellElement : cells){
+                String cellData = cellElement.getText();
+                if(cellData.equals(email.GetSubject()))
+                    return rowElement;
+            }
+        }
+        return null;
     }
 
     public boolean CheckIfEmailExists(Email email){
-        this.ShowSentEmails();
-
-        Wait<WebDriver> wait = customWait(15, 1000);
-        wait.until(ExpectedConditions.textToBePresentInElement(sentEmailsTable,sentEmailsTable.getText()));
-
-        List<WebElement> rows = sentEmailsTable.findElements(By.tagName("tr"));
-
-        for(WebElement rowElement : rows){
-            List<WebElement> cells = rowElement.findElements(By.tagName("td"));
-
-            for(WebElement cellElement : cells){
-                String cellData = cellElement.getText();
-
-                // If there is a row and that row contains mail subject then sent mail exists
-                if(cellData.equals(email.GetSubject())){
-                    return true;
-                }
-            }
-        }
-        return false;
+        customWait(60, 5000)
+                .until(ExpectedConditions.refreshed(
+                        ExpectedConditions.textToBePresentInElement(sentEmailsTable, email.GetSubject())));
+        return getEmailRow(email) != null;
     }
 }

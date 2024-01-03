@@ -4,11 +4,9 @@ import org.openqa.selenium.WebDriver;
 
 public class DriverFactory {
 
-    private static DriverFactory instance = new DriverFactory();
+    private static final DriverFactory instance = new DriverFactory();
     private DriverFactory(){}
     public static DriverFactory getInstance(){
-        //if(instance == null)
-            //instance = new DriverFactory();
         return instance;
     }
     ThreadLocal<WebDriver> driver = new ThreadLocal<WebDriver>();
