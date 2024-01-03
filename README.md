@@ -9,12 +9,16 @@ webdriver, Java programing language and maven architecture.
 3. [Usage](#usage)
 4. [Pages](#pages)
 5. [Tests](#tests)
+6. [testng.xml](#testng)
+7. [WebDriverManager](#webDriverManager)
+8. [BrowserFactory](#browserFactory)
+9. [DriverFactory](#driverFactory)
 
 <a name="prerequisites"></a>
 ## Prerequisites
   1. Java (JDK)
-  2. Web browser, Firefox or Chrome
-  3. IntelliJ Community Edition (Opional)
+  2. Web browser, Firefox and Chrome, Edge optional
+  3. IntelliJ Community Edition (Optional)
   4. Windows operating system
 
 <a name="installation"></a>
@@ -41,19 +45,19 @@ e.g. allure-2.25.0\allure-2.25.0\bin
 # Usage
 ### 1. Enter project folder
 ```
-   cd FERIT-Unios-Webmail-Testing
+cd FERIT-Unios-Webmail-Testing
 ```
 ### 2. Run tests using testng.xml
 In terminal enter this line (run with ctrl + enter):
 
 ```
-    mvn test
+mvn test
 ```
 ### 3. See test resaults
 In terminal enter this line:
  ```
-    allure serve allure-results
-  ```
+ allure serve allure-results
+ ```
 
 <a name="pages"></a>
 # Pages
@@ -94,30 +98,31 @@ public class ReceiptPage extends PageObject {
 
 <a name="tests"></a>
 # Tests
-### FunctionalTest class
-According to best practices this class should contain WebDriver instance and methods needed to setup driver
-before executing test
+### TestBase class
+This class is base for all test classes, it contains BrowserFactory class instance which will
+be used to launch specific browser specified in testng.xml file. It also contains @BeforeMethod, which
+means that method with this annotation will run before every test method, and @AfterMethod annotation.
 
 ```java
-public class FunctionalTest {
+public class TestBase {
+    BrowserFactory browserFactory = new BrowserFactory();
 
-	protected static WebDriver driver;
-	
-	@BeforeClass
-	public static void setUp(){
-		driver = new FirefoxDriver();
-		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
-	}
-	
-	@After
-	public void cleanUp(){
-		driver.manage().deleteAllCookies();
-	}
-	
-	@AfterClass
-	public static void tearDown(){
-		driver.close();
-	}	
+    @BeforeMethod
+    @Parameters("browser")
+    public void LaunchBrowser(String browser){
+        WebDriver driverInstance = browserFactory.createBrowserInstance(browser);
+        DriverFactory.getInstance().setDriver(driverInstance);
+
+        WebDriver driver = DriverFactory.getInstance().getDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.navigate().to("https://www.etfos.unios.hr/webmail/");
+    }
+
+    @AfterMethod
+    public void tearDown(){
+        DriverFactory.getInstance().closeBrowser();
+    }
 }
 ```
 
@@ -126,12 +131,114 @@ Test class should extend FunctionalTest class and contain only test method
 marked with @Test
 
 ```java
-public class SignUpFormTest extends FunctionalTest {
+public class SignUpFormTest extends TestBase {
 
 	@Test
 	public void signUp(){
 		test code...
 	}	
+}
+```
+<a name="testng"></a>
+# testng.xml
+An XML file that contains all the information how and which tests will be run when "mvn test"
+command is run.
+eg.
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="CrossBrowserTesting" parallel="methods">
+    <test name="ChromeTest">
+        <parameter name="browser" value="chrome"/>
+        <classes>
+            <class name="LoginTest"/>
+            <class name="LogoutTest"/>
+            <class name="InboxTest"/>
+        </classes>
+    </test>
+    <test name="FirefoxTest">
+        <parameter name="browser" value="firefox"/>
+        <classes>
+            <class name="LoginTest"/>
+            <class name="LogoutTest"/>
+            <class name="InboxTest"/>
+        </classes>
+    </test>
+</suite>
+```
+
+<a name="webDriverManager"></a>
+# WebDriverManager
+Very useful way to ensure that you browser driver will be the correct version as installed on
+another device.
+
+### Installation
+Go to [MavenRepository](https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager) and chose wich
+version you need and add the dependency to pom.xml file and reload maven project.
+
+### Use
+Usage is very simple as shown in the example, setup method will download correct browser driver version and
+all that is left to do is initialize driver variable.
+eg.
+```java
+WebDriverManager.firefoxdriver().setup();
+driver = new FirefoxDriver(options);
+```
+
+<a name="browserFactory"></a>
+# BrowserFactory
+Purpose of BrowserFactory is to make running parallel tests easier, in the testng.xml file in the parameter tag 
+is passed the name of the browser eg. "firefox" and BrowserFactory using createBrowserInstance method, will for 
+that thread run new browser instance in private mode of that type using WebDriverManager.
+
+```java
+public class BrowserFactory {
+    public WebDriver createBrowserInstance(String browser){
+        WebDriver driver = null;
+        if(browser.equalsIgnoreCase("firefox")){
+            WebDriverManager.firefoxdriver().setup();
+            FirefoxOptions options = new FirefoxOptions();
+            options.addArguments("-private");
+            driver = new FirefoxDriver(options);
+        }else if(browser.equalsIgnoreCase("chrome")){
+            WebDriverManager.chromedriver().setup();
+            ChromeOptions options = new ChromeOptions();
+            options.addArguments("--incognito");
+            driver = new ChromeDriver(options);
+        }else if(browser.equalsIgnoreCase("edge")){
+            WebDriverManager.edgedriver().setup();
+            driver = new EdgeDriver();
+        }
+        return driver;
+    }
+```
+<a name="driverFactory"></a>
+# DriverFactory
+DriverFactory is responsible for managing that in a signle thread there is only 1 driver instance working using
+Singleton pattern.
+
+```java
+public class DriverFactory {
+    private static final DriverFactory instance = new DriverFactory();
+
+    private DriverFactory(){}
+
+    public static DriverFactory getInstance(){
+        return instance;
+    }
+
+    ThreadLocal<WebDriver> driver = new ThreadLocal<WebDriver>();
+
+    public WebDriver getDriver(){
+        return this.driver.get();
+    }
+    public void setDriver(WebDriver driver){
+        this.driver.set(driver);
+    }
+    public void closeBrowser(){
+        driver.get().close();
+        driver.remove();
+    }
 }
 ```
 
