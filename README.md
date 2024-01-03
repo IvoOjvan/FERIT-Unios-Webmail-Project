@@ -66,7 +66,7 @@ web application this approach is called Page Object Model
 
 ### PageObject class
 This class contains of WebDriver instance and constructor which sets value to driver instance using  
-dependecy injection and initializig element using PageFactory
+dependecy injection and initializing element using PageFactory
 
 ```java
 public class PageObject {
