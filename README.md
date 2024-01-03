@@ -1,6 +1,6 @@
 # FERIT-Unios-Webmail-Project
 
-Project that provides automated functional test, such as login and logout, using selenium
+Project that provides automated functional tests, such as login and logout, using selenium
 webdriver, Java programing language and maven architecture.
 
 ## Table of Contents
@@ -17,7 +17,7 @@ webdriver, Java programing language and maven architecture.
 <a name="prerequisites"></a>
 ## Prerequisites
   1. Java (JDK)
-  2. Web browser, Firefox and Chrome, Edge optional
+  2. Web browser, Firefox and Chrome, Edge (Optional)
   3. IntelliJ Community Edition (Optional)
   4. Windows operating system
 
@@ -53,7 +53,7 @@ In terminal enter this line (run with ctrl + enter):
 ```
 mvn test
 ```
-### 3. See test resaults
+### 3. See test results
 In terminal enter this line:
  ```
  allure serve allure-results
@@ -173,7 +173,7 @@ Very useful way to ensure that you browser driver will be the correct version as
 another device.
 
 ### Installation
-Go to [MavenRepository](https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager) and chose wich
+Go to [MavenRepository](https://mvnrepository.com/artifact/io.github.bonigarcia/webdrivermanager) and chose which
 version you need and add the dependency to pom.xml file and reload maven project.
 
 ### Use
@@ -214,7 +214,7 @@ public class BrowserFactory {
 ```
 <a name="driverFactory"></a>
 # DriverFactory
-DriverFactory is responsible for managing that in a signle thread there is only 1 driver instance working using
+DriverFactory is responsible for managing that in a single thread there is only 1 driver instance working using
 Singleton pattern.
 
 ```java
